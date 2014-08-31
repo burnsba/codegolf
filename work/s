@@ -1,0 +1,38 @@
+#!/bin/bash
+
+offset=`expr $RANDOM % 512`
+mem=`dd if=/dev/mem skip=$offset count=1 2>/dev/null| tr '[\000-\040]' '\n' | tr '[\177-\377'] '\n' | sort -u | grep '.\{2,\}'`
+
+results=""
+
+for line in $mem
+do
+	echo "Evaluating $line"
+	greps=`grep "^$line" /usr/share/dict/words | head`
+	
+	if [ -n "$greps" ]
+	then
+		echo "Found matches."
+		echo $greps
+	else
+		#echo "No matches in dictionary. Attempting to decode."
+		decode=`echo "$line" | base64 -d 2>/dev/null`
+		if [ $? -ne 1 ]
+		then
+			echo "Decode is good: $decode"
+		#else
+			#echo "Not a valid base64 encoded string."
+		fi
+	fi
+	
+	results+=" $line"
+	
+	# make it look like this takes a while to process
+	sleep 0.5
+	
+done 
+
+if (( ${#results} > 1 ))
+then
+	echo "Done processing input at block $offset: $results"
+fi

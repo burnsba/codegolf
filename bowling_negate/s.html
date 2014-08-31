@@ -1,0 +1,82 @@
+<html>
+<head>
+<script>
+
+	var start_time = Date.now();
+
+	var output_string = '';
+
+	var MAX = 1200;
+	
+	// MAX = 600
+	// run time: 71.85 sec
+	// sum: 78597 
+	
+	// MAX = 1200
+	// run time: 204.172 sec
+	// sum: 89401 
+
+	function can_add_input(str)
+	{
+		var i = 0;
+		var check = '';
+
+		// it might be possible to append a string such that 
+		// the last few characters of the original string and the
+		// first few characters of the new string are duplicated
+		// previously.
+
+		var t = output_string + str;
+
+		for (i=t.length - 6; i>=0; i--)
+		{
+			check = t.substr(i, 6);
+			if (t.indexOf(check) != output_string.length && t.indexOf(check) != i)
+			{
+				return false;   
+			}
+		}
+
+		return true;
+	}
+
+	function build_output()
+	{
+		var i;
+		var to_be_appended = '';
+		var x;
+		var y;
+		var start_x = 1;
+		var start_y = 1; 
+
+		to_be_appended = '';
+
+		for (x=1; x<MAX; x++)
+		{
+			for (y=1; y<MAX; y++)
+			{
+				to_be_appended = x + '+' + y + '+';
+				
+				if (can_add_input(to_be_appended))
+				{
+					output_string += to_be_appended;
+				}
+			}
+		}
+	}
+
+	build_output();
+
+	console.log(output_string);
+	
+	var sum = eval(output_string + '0');
+	
+	var end_time = Date.now();
+	
+	console.log("run time: " + ((end_time - start_time) / 1000) + " sec");
+	
+	console.log("sum: " + sum);
+
+</script>
+</head>
+</html>
